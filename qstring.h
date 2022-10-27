@@ -16,7 +16,7 @@
 
 typedef char * qstring_t;
 
-char * pcQsGetPart(qstring_t qs, int index);
+char * pcQsGetPart(qstring_t qs, unsigned index);
 qstring_t pcQsNewQstring (const char *a, const char *b, const char *c, const char *d);
 qstring_t pcQsNewPrintableQstring (qstring_t oldqs, char delim);
 
