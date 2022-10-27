@@ -9,8 +9,10 @@
 #include <string.h>
 #include "qstring.h"
 
-char * pcQsGetPart(qstring_t qs, int index)
+char * pcQsGetPart(qstring_t qs, unsigned index)
 {
+	if (index > 3)
+		return (NULL);
 	for (; index>0; --index) {
 		while (*qs++)
 			;
@@ -21,14 +23,16 @@ char * pcQsGetPart(qstring_t qs, int index)
 
 qstring_t pcQsNewQstring (const char *a, const char *b, const char *c, const char *d)
 {
-	size_t lena = strlen(a), lenb = strlen(b), lenc = strlen(c), lend = strlen(d);
-	size_t len = lena + lenb + lenc + lend + 4;
-	qstring_t newq = (qstring_t)malloc(len);
+	size_t len = strlen(a)+strlen(b)+strlen(c)+strlen(d);
+	qstring_t newq = (qstring_t)malloc(len + 4);
+	qstring_t tq = newq;
 	
-	strcpy(newq,a);
-	strcpy(&newq[lena+1],b);
-	strcpy(&newq[lena+lenb+2],c);
-	strcpy(&newq[lena+lenb+lenc+3],d);
+	if (newq) {
+		while ((*tq++ = *a++)) ;
+		while ((*tq++ = *b++)) ;
+		while ((*tq++ = *c++)) ;
+		while ((*tq++ = *d++)) ;
+	}
 	return (newq);
 }
 
@@ -45,13 +49,16 @@ qstring_t pcQsNewPrintableQstring (qstring_t oldqs, char delim)
 	
 	qs = malloc(len);
 	// this time with copying
-	for (int i = 0, len = 0; i < 4; i++) {
-		for (;(qs[len] = oldqs[len]); len++) {
+	if (qs) {
+		len = 0;
+		for (int i = 0; i < 4; i++) {
+			for (;(qs[len] = oldqs[len]); len++) {
+			}
+			// there is a null at oldqs[len]
+			if (i != 3)
+				qs[len] = delim;
+			len++;
 		}
-		// there is a null at oldqs[len]
-		if (i != 3)
-			qs[len] = delim;
-		len++;
 	}
 	return (qs);
 }
